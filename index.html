@@ -13,11 +13,23 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
 
   <style>
+    /* ============ فونت QCF4 عثمان طه (مصحف مدینه ۱۴۴۱) ============ */
+    @font-face {
+      font-family: 'QCF4_Page';
+      src: url('https://cdn.jsdelivr.net/gh/MohamadHajjRabee/quran-qcf4@main/fonts-woff2/QCF4_Hafs_01_W.woff2') format('woff2');
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'QCF4_BSML';
+      src: url('https://cdn.jsdelivr.net/gh/MohamadHajjRabee/quran-qcf4@main/fonts-woff2/QCF4_QBSML.woff2') format('woff2');
+      font-display: swap;
+    }
+
     :root {
       --primary: #6957d9;
       --secondary: #ed629b;
@@ -161,7 +173,6 @@
       border: 1px solid var(--border);
     }
 
-    /* نماز بعدی */
     .prayer-row.next {
       box-shadow: 0 8px 20px -8px var(--c1), 0 0 0 2px var(--c1) inset;
       transform: translateX(-2px);
@@ -396,92 +407,120 @@
     }
     .volume-row .vol-value { color: var(--muted); font-size: .82rem; font-weight: 700; min-width: 42px; text-align: left; direction: ltr; }
 
-    /* ============ QURAN ============ */
-    .quran-controls {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
+    /* ============ QURAN (صفحه‌محور) ============ */
+    .quran-surah-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding: 4px;
+      background: #fbfaff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 12px;
     }
+    .quran-surah-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background .15s;
+      font-size: .92rem;
+      color: var(--text);
+    }
+    .quran-surah-item:hover { background: #f1eeff; }
+    .quran-surah-item.active { background: linear-gradient(110deg, #6957d9, #8a75ed); color: #fff; }
+    .quran-surah-item .s-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 26px; height: 26px;
+      border-radius: 8px;
+      background: rgba(105,87,217,.12);
+      font-weight: 700; font-size: .8rem;
+      margin-left: 8px;
+    }
+    .quran-surah-item.active .s-num { background: rgba(255,255,255,.25); }
+    .quran-surah-item .s-name { flex: 1; font-weight: 700; }
+    .quran-surah-item .s-ayahs { font-size: .78rem; color: var(--muted); font-weight: 600; }
+
     .quran-nav {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 16px;
+      align-items: center;
+      margin-bottom: 12px;
     }
+    .quran-page-indicator {
+      flex: 1;
+      text-align: center;
+      font-weight: 700;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
     .quran-text {
       background: linear-gradient(145deg, #fdfaf3, #f9f5ea);
       border: 1px solid #e8dcc0;
       border-radius: 20px;
-      padding: 24px 20px;
-      font-family: 'Amiri Quran', 'Scheherazade New', 'Traditional Arabic', serif;
-      font-size: 1.75rem;
-      line-height: 2.6;
-      text-align: justify;
-      text-align-last: center;
+      padding: 20px 16px;
       direction: rtl;
-      min-height: 300px;
+      min-height: 400px;
       box-shadow: inset 0 2px 8px rgba(139, 110, 50, .08);
+      position: relative;
     }
-    .quran-text .bismillah {
+    .quran-text .quran-page {
       display: block;
-      text-align: center;
-      font-size: 2rem;
-      color: #8b5a2b;
-      margin-bottom: 20px;
-      padding-bottom: 14px;
-      border-bottom: 2px solid #e8dcc0;
-      font-weight: 700;
+      width: 100%;
     }
-    .quran-text .ayah {
-      display: inline;
-      transition: background .3s;
-    }
-    .quran-text .ayah:hover {
-      background: rgba(255, 215, 120, .25);
-      border-radius: 6px;
-    }
-    .quran-text .ayah-number {
-      display: inline-flex;
-      align-items: center;
+    .quran-text .quran-page .mushaf-line {
+      display: flex;
+      flex-direction: row-reverse;
       justify-content: center;
-      min-width: 42px;
-      height: 42px;
-      padding: 0 8px;
-      margin: 0 6px;
-      background: radial-gradient(circle at 30% 30%, #fef3c7, #fcd34d);
-      border: 2px solid #b45309;
-      border-radius: 50%;
-      color: #7c2d12;
-      font-size: .85rem;
-      font-weight: 800;
-      font-family: 'Vazirmatn', Tahoma, sans-serif;
-      vertical-align: middle;
-      line-height: 1;
+      align-items: center;
+      min-height: 1.9em;
+      flex-wrap: wrap;
+      gap: 0;
     }
-    .quran-text .jallah {
+    .quran-text .quran-page .mushaf-line span {
+      font-family: 'QCF4_Page', serif;
+      font-size: 1.6rem;
+      line-height: 2.1;
+      color: #1a1a1a;
+    }
+    .quran-text .quran-page .jallah-glyph {
       color: #dc2626;
-      font-weight: 700;
     }
     .quran-text .surah-header {
       display: block;
       text-align: center;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       color: #7c2d12;
       font-weight: 800;
-      margin: 0 0 16px;
-      padding: 12px;
+      margin: 0 0 12px;
+      padding: 8px;
       background: linear-gradient(90deg, transparent, #fef3c7, transparent);
       border-top: 2px solid #b45309;
       border-bottom: 2px solid #b45309;
       font-family: 'Vazirmatn', Tahoma, sans-serif;
+    }
+    .quran-text .bismillah {
+      display: block;
+      text-align: center;
+      font-family: 'QCF4_BSML', 'QCF4_Page', serif;
+      font-size: 1.8rem;
+      color: #8b5a2b;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8dcc0;
     }
     .quran-loading {
       text-align: center;
       color: var(--muted);
       font-family: 'Vazirmatn', Tahoma, sans-serif;
       font-size: 1rem;
-      padding: 40px 0;
+      padding: 60px 0;
     }
 
     .hidden { display: none !important; }
@@ -504,9 +543,10 @@
       .radio-avatar { width: 48px; height: 48px; border-radius: 15px; }
       .radio-avatar svg { width: 24px; height: 24px; }
       .radio-btn { width: 46px; height: 46px; }
-      .quran-text { font-size: 1.4rem; line-height: 2.3; padding: 16px 12px; }
-      .quran-text .bismillah { font-size: 1.6rem; }
-      .quran-text .ayah-number { min-width: 34px; height: 34px; font-size: .75rem; }
+      .quran-text { padding: 12px 8px; }
+      .quran-text .quran-page .mushaf-line span { font-size: 1.2rem; }
+      .quran-text .bismillah { font-size: 1.4rem; }
+      .quran-surah-list { max-height: 220px; }
     }
   </style>
 </head>
@@ -531,6 +571,7 @@
       <button class="secondary" type="button" data-show="settingsPanel">⚙️ تنظیمات</button>
     </nav>
 
+    <!-- ============ اوقات نماز ============ -->
     <section id="prayersPanel">
       <div class="card">
         <h2>نمازهای امروز</h2>
@@ -568,6 +609,7 @@
       </div>
     </section>
 
+    <!-- ============ رویدادهای نجومی ============ -->
     <section id="moonPanel" class="hidden">
       <div class="card">
         <h2>۱. وضعیت نجومی امروز</h2>
@@ -577,30 +619,22 @@
 
         <div class="moon-grid" style="margin-top:14px">
           <div class="moon-item" style="--c1:#f59e0b;--c2:#fcd34d">
-            <div class="m-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>
-            </div>
+            <div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg></div>
             <span class="label">طلوع خورشید</span>
             <strong id="sunrise">—</strong>
           </div>
           <div class="moon-item" style="--c1:#ec4899;--c2:#f9a8d4">
-            <div class="m-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>
-            </div>
+            <div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg></div>
             <span class="label">غروب خورشید</span>
             <strong id="sunset">—</strong>
           </div>
           <div class="moon-item" style="--c1:#6366f1;--c2:#a5b4fc">
-            <div class="m-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a5 5 0 0 0 7 7 7 7 0 1 1-7-7Z"/><path d="m15 20 2-2 2 2"/></svg>
-            </div>
+            <div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a5 5 0 0 0 7 7 7 7 0 1 1-7-7Z"/><path d="m15 20 2-2 2 2"/></svg></div>
             <span class="label">طلوع ماه</span>
             <strong id="moonrise">—</strong>
           </div>
           <div class="moon-item" style="--c1:#8b5cf6;--c2:#c4b5fd">
-            <div class="m-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a5 5 0 0 0 7 7 7 7 0 1 1-7-7Z"/><path d="m15 18 2 2 2-2"/></svg>
-            </div>
+            <div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a5 5 0 0 0 7 7 7 7 0 1 1-7-7Z"/><path d="m15 18 2 2 2-2"/></svg></div>
             <span class="label">غروب ماه</span>
             <strong id="moonset">—</strong>
           </div>
@@ -656,9 +690,7 @@
       <div class="card">
         <h2>📻 رادیو قرآن</h2>
         <p class="note">پخش زندهٔ تلاوت قرآن کریم از قاریان مشهور جهان اسلام. برای شروع، دکمهٔ پخش هر شبکه را بزنید.</p>
-
         <div class="radio-list" style="margin-top:14px">
-
           <article class="radio-card" id="card-afasy" style="--rc1:#6957d9;--rc2:#a78bfa" data-radio="afasy">
             <div class="radio-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v13"/><path d="M19 10v4a7 7 0 0 1-14 0v-4"/><path d="M12 21v-2"/><circle cx="12" cy="4" r="2"/></svg></div>
             <div class="radio-info"><h3>رادیو قرآن مشاری العفاسی</h3><div class="radio-sub"><span class="eq"><span></span><span></span><span></span><span></span><span></span></span><span class="radio-status">آمادهٔ پخش</span></div></div>
@@ -700,44 +732,41 @@
             <button class="radio-btn" type="button" aria-label="پخش / توقف"><svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 7 5.5Z"/></svg><svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.4"/><rect x="14" y="5" width="4" height="14" rx="1.4"/></svg></button>
             <div class="volume-row"><span class="vol-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></span><input type="range" class="radio-volume" min="0" max="100" value="80" style="--vol:80%"><span class="vol-value">80%</span></div>
           </article>
-
         </div>
         <p id="radioStatus" class="status" style="margin-top:14px">برای پخش، دکمهٔ هر شبکه را بزنید.</p>
       </div>
     </section>
 
-    <!-- ============ قرآن کریم ============ -->
+    <!-- ============ قرآن کریم (صفحه‌محور) ============ -->
     <section id="quranPanel" class="hidden">
       <div class="card">
-        <h2>📖 قرآن کریم · خط عثمان طاها</h2>
-        <p class="note">متن کامل قرآن کریم با خط عثمان طاها. کلمات جلاله (الله) با رنگ قرمز مشخص شده‌اند.</p>
+        <h2>📖 قرآن کریم · خط عثمان طاها (مصحف مدینه)</h2>
+        <p class="note">متن کامل قرآن کریم با فونت QCF4 عثمان طه (نسخهٔ ۱۴۴۱ هـ). کلمات جلاله با رنگ قرمز مشخص شده‌اند.</p>
 
-        <div class="quran-controls">
-          <label class="setting">
-            انتخاب سوره
-            <select id="surahSelect"></select>
-          </label>
-        </div>
+        <!-- فهرست کامل سوره‌ها (مثل عکس) -->
+        <div id="quranSurahList" class="quran-surah-list"></div>
 
+        <!-- ناوبری صفحه‌به‌صفحه -->
         <div class="quran-nav">
-          <button id="quranPrev" type="button" class="secondary">◀ سورهٔ قبلی</button>
-          <button id="quranNext" type="button">سورهٔ بعدی ▶</button>
-          <button id="quranBismillah" type="button" class="secondary">بِسْمِ اللَّهِ</button>
+          <button id="quranPrevPage" type="button" class="secondary">◀ صفحهٔ قبل</button>
+          <span id="quranPageIndicator" class="quran-page-indicator">صفحه ۱</span>
+          <button id="quranNextPage" type="button">صفحهٔ بعد ▶</button>
         </div>
 
-        <p id="quranStatus" class="status">برای شروع، یک سوره انتخاب کنید.</p>
+        <p id="quranStatus" class="status">برای شروع، یک سوره از فهرست بالا انتخاب کنید.</p>
 
+        <!-- متن قرآن (صفحه‌محور) -->
         <div id="quranText" class="quran-text" dir="rtl">
           <div class="quran-loading">📖 لطفاً یک سوره انتخاب کنید…</div>
         </div>
       </div>
     </section>
 
+    <!-- ============ تنظیمات ============ -->
     <section id="settingsPanel" class="hidden">
       <div class="card">
         <h2>تنظیمات اقامه و اعلان‌ها</h2>
         <div id="iqamaSettings" class="settings-grid"></div>
-
         <label class="check-row">
           <input id="adhkarEnabled" type="checkbox">
           یادآوری اذکار عصر، ۳۰ دقیقه پیش از مغرب
@@ -746,7 +775,6 @@
           <input id="alertsEnabled" type="checkbox">
           هشدار اقامه، ۱۰ دقیقه پیش از زمان اقامه
         </label>
-
         <label class="setting" style="margin-top:14px">
           تنظیم تاریخ قمری (روز)
           <input id="hijriAdjustment" type="number" min="-2" max="2" step="1">
@@ -757,17 +785,13 @@
       <div class="card">
         <h2>رنگ برنامه</h2>
         <div class="settings-row">
-          <label class="setting">رنگ اصلی
-            <input id="themeColor" type="color" value="#635bdb">
-          </label>
-          <label class="setting">رنگ پس‌زمینه
-            <input id="backgroundColor" type="color" value="#f5f3ff">
-          </label>
+          <label class="setting">رنگ اصلی<input id="themeColor" type="color" value="#635bdb"></label>
+          <label class="setting">رنگ پس‌زمینه<input id="backgroundColor" type="color" value="#f5f3ff"></label>
         </div>
       </div>
     </section>
 
-    <footer>اوقات نماز از سرویس AlAdhan دریافت می‌شوند. برای دریافت دادهٔ تازه اتصال اینترنت لازم است.</footer>
+    <footer>اوقات نماز از سرویس AlAdhan دریافت می‌شوند. متن قرآن از Quran.com و Tanzil.net با فونت QCF4 عثمان طه.</footer>
   </main>
 
   <script>
@@ -800,14 +824,14 @@
       basit:   { title: "رادیو قرآن عبدالباسط عبدالصمد", urls: ["https://backup.qurango.net/radio/abdulbasit_abdulsamad"] },
       muaiqly: { title: "رادیو قرآن ماهر المعیقلی", urls: ["https://backup.qurango.net/radio/maher_almuaiqly"] },
       hazza:   { title: "رادیو قرآن هزاع البلوشی", urls: ["https://backup.qurango.net/radio/hazza_al_balushi"] },
-      sufi:    { title: "رادیو قرآن عبدالرشید صوفی", urls: ["https://qurango.net/radio/abdulrasheed_soufi_khalaf", "https://backup.qurango.net/radio/abdulrasheed_soufi_khalaf", "https://qurango.net/radio/abdulrasheed_soufi_assosi"] },
+      sufi:    { title: "رادیو قرآن عبدالرشید صوفی", urls: ["https://qurango.net/radio/abdulrasheed_soufi_khalaf", "https://backup.qurango.net/radio/abdulrasheed_soufi_khalaf"] },
       basfar:  { title: "رادیو قرآن عبدالله بصفر", urls: ["https://qurango.net/radio/abdullah_basfer", "https://backup.qurango.net/radio/abdullah_basfer"] },
       ghamdi:  { title: "رادیو قرآن سعد الغامدی", urls: ["https://backup.qurango.net/radio/saad_alghamdi", "https://radio.qurango.net/radio/saad_alghamdi"] },
       dosari:  { title: "رادیو قرآن یاسر الدوسری", urls: ["https://backup.qurango.net/radio/yasser_aldosari", "https://radio.qurango.net/radio/yasser_aldosari"] },
       sudais:  { title: "رادیو قرآن عبدالرحمن السدیس", urls: ["https://qurango.net/radio/abdulrahman_alsudaes", "https://backup.qurango.net/radio/abdulrahman_alsudaes"] },
       shuraim: { title: "رادیو قرآن سعود الشریم", urls: ["https://backup.qurango.net/radio/saud_alshuraim", "https://radio.qurango.net/radio/saud_alshuraim"] },
       abkar:   { title: "رادیو قرآن ادریس أبکر", urls: ["https://qurango.net/radio/idrees_abkr", "https://backup.qurango.net/radio/idrees_abkr"] },
-      ayyub:   { title: "رادیو قرآن محمد ایوب", urls: ["https://qurango.net/radio/mohammed_ayyub", "https://backup.qurango.net/radio/mohammed_ayyub", "https://qurango.net/radio/ayyoub2"] }
+      ayyub:   { title: "رادیو قرآن محمد ایوب", urls: ["https://qurango.net/radio/mohammed_ayyub", "https://backup.qurango.net/radio/mohammed_ayyub"] }
     };
 
     const DEFAULTS = {
@@ -828,17 +852,13 @@
       try {
         const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
         return { ...DEFAULTS, ...raw, iqama: { ...DEFAULTS.iqama, ...(raw.iqama || {}) } };
-      } catch {
-        return JSON.parse(JSON.stringify(DEFAULTS));
-      }
+      } catch { return JSON.parse(JSON.stringify(DEFAULTS)); }
     }
     function saveSettings() { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); }
     function byId(id) { return document.getElementById(id); }
 
     function localDateParts(date = new Date()) {
-      const parts = new Intl.DateTimeFormat("en-GB", {
-        timeZone: TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit"
-      }).formatToParts(date);
+      const parts = new Intl.DateTimeFormat("en-GB", { timeZone: TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(date);
       const part = type => Number(parts.find(item => item.type === type).value);
       return { year: part("year"), month: part("month"), day: part("day") };
     }
@@ -847,50 +867,50 @@
       return `${String(p.day).padStart(2, "0")}-${String(p.month).padStart(2, "0")}-${p.year}`;
     }
     function formatPersianDate(date, calendar = "persian") {
-      return new Intl.DateTimeFormat("fa-IR-u-ca-" + calendar, {
-        timeZone: TIME_ZONE, weekday: "long", year: "numeric", month: "long", day: "numeric"
-      }).format(date);
+      return new Intl.DateTimeFormat("fa-IR-u-ca-" + calendar, { timeZone: TIME_ZONE, weekday: "long", year: "numeric", month: "long", day: "numeric" }).format(date);
     }
     function formatClock(date) {
-      return new Intl.DateTimeFormat("fa-IR", {
-        timeZone: TIME_ZONE, hour: "2-digit", minute: "2-digit"
-      }).format(date);
+      return new Intl.DateTimeFormat("fa-IR", { timeZone: TIME_ZONE, hour: "2-digit", minute: "2-digit" }).format(date);
     }
     function tehranTimeToDate(time, baseDate = new Date()) {
       const clean = String(time || "").split(" ")[0];
       const match = clean.match(/^(\d{1,2}):(\d{2})/);
       if (!match) return null;
       const { year, month, day } = localDateParts(baseDate);
-      const hour = Number(match[1]);
-      const minute = Number(match[2]);
-      return new Date(Date.UTC(year, month - 1, day, hour - 3, minute - 30));
+      return new Date(Date.UTC(year, month - 1, day, Number(match[1]) - 3, Number(match[2]) - 30));
     }
     function formatHM(minutes) {
       if (!Number.isFinite(minutes)) return "—";
       const sign = minutes < 0 ? "−" : "";
       const total = Math.abs(Math.round(minutes));
-      const h = String(Math.floor(total / 60)).padStart(2, "0");
-      const m = String(total % 60).padStart(2, "0");
-      return `${sign}${h}:${m}`;
+      return `${sign}${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
     }
 
-    /* ============ تاریخ روز (بدون تکرار روز هفته) ============ */
+    /* ============ تاریخ روز (فرمت صحیح: جمعه ۲۴ مهر ۱۴۰۵) ============ */
     function loadDateHeader() {
       const now = new Date();
       const adjustment = Number(settings.hijriAdjustment || 0);
       const shifted = new Date(now.getTime() + adjustment * 86400000);
 
-      // تاریخ شمسی: «جمعه ۲۴ مهر ۱۴۰۵»
-      const persianFull = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
-        timeZone: TIME_ZONE, weekday: "long", year: "numeric", month: "long", day: "numeric"
-      }).format(now);
+      // تاریخ شمسی با ترتیب صحیح: روز هفته، روز، ماه، سال
+      const persianParts = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
+        timeZone: TIME_ZONE, weekday: "long", day: "numeric", month: "long", year: "numeric"
+      }).formatToParts(now);
+      const getPart = (parts, type) => (parts.find(p => p.type === type)?.value) || "";
+      const weekday = getPart(persianParts, "weekday");
+      const day = getPart(persianParts, "day");
+      const month = getPart(persianParts, "month");
+      const year = getPart(persianParts, "year");
 
-      // تاریخ قمری: فقط روز و ماه و سال (بدون روز هفته)
+      // تاریخ قمری (فقط روز ماه سال، بدون روز هفته)
       const hijriParts = new Intl.DateTimeFormat("fa-IR-u-ca-islamic-umalqura", {
-        timeZone: TIME_ZONE, year: "numeric", month: "long", day: "numeric"
-      }).format(shifted);
+        timeZone: TIME_ZONE, day: "numeric", month: "long", year: "numeric"
+      }).formatToParts(shifted);
+      const hDay = getPart(hijriParts, "day");
+      const hMonth = getPart(hijriParts, "month");
+      const hYear = getPart(hijriParts, "year");
 
-      byId("todayLine").textContent = `${persianFull} · ${hijriParts}`;
+      byId("todayLine").textContent = `${weekday} ${day} ${month} ${year} · ${hDay} ${hMonth} ${hYear}`;
     }
 
     async function loadPrayerTimes() {
@@ -917,12 +937,10 @@
       }
     }
 
-    /* ============ رندر ردیف‌های نماز ============ */
     function renderPrayerTimes() {
       if (!prayerData) return;
       const container = byId("prayerRows");
       const now = new Date();
-
       const prayerKeys = PRAYERS.filter(p => p.key !== "Sunrise");
       const upcoming = prayerKeys.map(p => {
         const time = tehranTimeToDate(prayerData.timings[p.key], now);
@@ -933,16 +951,11 @@
       container.innerHTML = PRAYERS.map(prayer => {
         const time = tehranTimeToDate(prayerData.timings[prayer.key], now);
         const hasIqama = prayer.key !== "Sunrise";
-        const iqama = hasIqama && time
-          ? new Date(time.getTime() + Number(settings.iqama[prayer.key] || 0) * 60000)
-          : null;
+        const iqama = hasIqama && time ? new Date(time.getTime() + Number(settings.iqama[prayer.key] || 0) * 60000) : null;
         const isNext = next && next.key === prayer.key;
         return `
           <article class="prayer-row ${isNext ? "next" : ""}" style="--c1:${prayer.c1};--c2:${prayer.c2}">
-            <div class="p-name">
-              <span class="p-icon">${ICONS[prayer.icon]}</span>
-              <span>${prayer.name}</span>
-            </div>
+            <div class="p-name"><span class="p-icon">${ICONS[prayer.icon]}</span><span>${prayer.name}</span></div>
             <div class="p-times">
               <span class="p-time-main">${time ? formatClock(time) : "—"}</span>
               ${hasIqama ? `<span class="p-iqama">اقامه: ${iqama ? formatClock(iqama) : "—"}</span>` : ""}
@@ -951,11 +964,9 @@
       }).join("");
     }
 
-    /* ============ باقی‌مانده تا اذان و اقامهٔ بعدی ============ */
     function updateRemaining() {
       if (!prayerData) return;
       const now = new Date();
-
       const items = PRAYERS.filter(p => p.key !== "Sunrise").map(p => {
         const t = tehranTimeToDate(prayerData.timings[p.key], now);
         if (!t) return null;
@@ -966,34 +977,26 @@
       const nextAdhan = items.find(p => p.adhan > now);
       const nextIqama = items.find(p => p.iqama > now);
 
-      // اذان بعدی
       if (nextAdhan) {
         byId("nextAdhanName").textContent = `اذان ${nextAdhan.name} · ${formatClock(nextAdhan.adhan)}`;
-        const sec = Math.max(0, Math.floor((nextAdhan.adhan - now) / 1000));
-        byId("nextAdhanTime").textContent = formatDuration(sec);
+        byId("nextAdhanTime").textContent = formatDuration(Math.max(0, Math.floor((nextAdhan.adhan - now) / 1000)));
       } else {
         byId("nextAdhanName").textContent = "اذان‌های امروز تمام شد";
         byId("nextAdhanTime").textContent = "--:--:--";
       }
 
-      // اقامهٔ بعدی
       if (nextIqama) {
         byId("nextIqamaName").textContent = `اقامهٔ ${nextIqama.name} · ${formatClock(nextIqama.iqama)}`;
-        const sec = Math.max(0, Math.floor((nextIqama.iqama - now) / 1000));
-        byId("nextIqamaTime").textContent = formatDuration(sec);
+        byId("nextIqamaTime").textContent = formatDuration(Math.max(0, Math.floor((nextIqama.iqama - now) / 1000)));
       } else {
         byId("nextIqamaName").textContent = "اقامه‌های امروز تمام شد";
         byId("nextIqamaTime").textContent = "--:--:--";
       }
-
       checkReminders(now, nextIqama);
     }
 
     function formatDuration(seconds) {
-      const h = String(Math.floor(seconds / 3600)).padStart(2, "0");
-      const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
-      const s = String(seconds % 60).padStart(2, "0");
-      return `${h}:${m}:${s}`;
+      return `${String(Math.floor(seconds / 3600)).padStart(2, "0")}:${String(Math.floor((seconds % 3600) / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
     }
 
     function sendNotification(title, body, key) {
@@ -1001,9 +1004,7 @@
       notifiedKeys.add(key);
       if ("Notification" in window && Notification.permission === "granted") {
         new Notification(title, { body, icon: "./icon-192.png" });
-      } else {
-        alert(`${title}\n${body}`);
-      }
+      } else { alert(`${title}\n${body}`); }
     }
 
     function checkReminders(now, upcoming) {
@@ -1029,17 +1030,13 @@
 
     function renderIqamaSettings() {
       byId("iqamaSettings").innerHTML = PRAYERS.filter(p => p.key !== "Sunrise").map(p => `
-        <label class="setting">
-          تأخیر اقامهٔ ${p.faName} (دقیقه)
-          <input type="number" min="0" max="120" step="1"
-            data-iqama="${p.key}" value="${Number(settings.iqama[p.key] || 0)}">
+        <label class="setting">تأخیر اقامهٔ ${p.faName} (دقیقه)
+          <input type="number" min="0" max="120" step="1" data-iqama="${p.key}" value="${Number(settings.iqama[p.key] || 0)}">
         </label>`).join("");
       document.querySelectorAll("[data-iqama]").forEach(input => {
         input.addEventListener("change", () => {
           settings.iqama[input.dataset.iqama] = Math.max(0, Number(input.value) || 0);
-          saveSettings();
-          renderPrayerTimes();
-          updateRemaining();
+          saveSettings(); renderPrayerTimes(); updateRemaining();
         });
       });
     }
@@ -1091,11 +1088,8 @@
       for (const [key, title, c1, c2] of extra) {
         if (document.getElementById(`card-${key}`)) continue;
         const card = document.createElement("article");
-        card.className = "radio-card";
-        card.id = `card-${key}`;
-        card.dataset.radio = key;
-        card.style.setProperty("--rc1", c1);
-        card.style.setProperty("--rc2", c2);
+        card.className = "radio-card"; card.id = `card-${key}`; card.dataset.radio = key;
+        card.style.setProperty("--rc1", c1); card.style.setProperty("--rc2", c2);
         card.innerHTML = `
           <div class="radio-avatar" aria-hidden="true">🎙️</div>
           <div class="radio-info"><h3>${title}</h3><div class="radio-sub">
@@ -1119,24 +1113,16 @@
         const volumeSlider = card.querySelector(".radio-volume");
         const volValue = card.querySelector(".vol-value");
         const statusEl = card.querySelector(".radio-status");
-
         playBtn.addEventListener("click", () => {
-          if (currentRadio === key && currentAudio && !currentAudio.paused) {
-            stopRadio();
-          } else {
-            playRadio(key);
-          }
+          if (currentRadio === key && currentAudio && !currentAudio.paused) stopRadio();
+          else playRadio(key);
         });
-
         volumeSlider.addEventListener("input", event => {
           const val = Number(event.target.value);
           volumeSlider.style.setProperty("--vol", val + "%");
           volValue.textContent = val + "%";
-          if (currentRadio === key && currentAudio) {
-            currentAudio.volume = val / 100;
-          }
+          if (currentRadio === key && currentAudio) currentAudio.volume = val / 100;
         });
-
         card._setStatus = (msg) => { if (statusEl) statusEl.textContent = msg; };
       });
     }
@@ -1144,107 +1130,53 @@
     function playRadio(key) {
       const info = RADIOS[key];
       if (!info) return;
-
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.src = "";
-        currentAudio.load();
-        currentAudio = null;
-      }
+      if (currentAudio) { currentAudio.pause(); currentAudio.src = ""; currentAudio.load(); currentAudio = null; }
       resetRadioCards();
-
-      const audio = new Audio();
-      audio.preload = "none";
-      const urls = info.urls || [];
-      if (!urls.length) return;
-      let sourceIndex = 0;
-      let manuallyStopped = false;
-      audio.__isStopped = false;
-      audio.src = urls[sourceIndex];
-
+      const audio = new Audio(); audio.preload = "none";
+      const urls = info.urls || []; if (!urls.length) return;
+      let sourceIndex = 0; let manuallyStopped = false;
+      audio.__isStopped = false; audio.src = urls[sourceIndex];
       const card = document.getElementById(`card-${key}`);
       const slider = card?.querySelector(".radio-volume");
       audio.volume = slider ? Number(slider.value) / 100 : 0.8;
-
       const setStatus = card?._setStatus || (() => {});
-      setStatus("در حال اتصال…");
-      byId("radioStatus").textContent = `در حال اتصال به ${info.title}…`;
+      setStatus("در حال اتصال…"); byId("radioStatus").textContent = `در حال اتصال به ${info.title}…`;
 
       audio.addEventListener("playing", () => {
-        if (manuallyStopped || audio.__isStopped || currentAudio !== audio) {
-          audio.pause();
-          return;
-        }
-        card?.classList.add("playing");
-        setStatus("در حال پخش زنده");
-        byId("radioStatus").textContent = `▶ ${info.title} در حال پخش است.`;
-        currentRadio = key;
+        if (manuallyStopped || audio.__isStopped || currentAudio !== audio) { audio.pause(); return; }
+        card?.classList.add("playing"); setStatus("در حال پخش زنده");
+        byId("radioStatus").textContent = `▶ ${info.title} در حال پخش است.`; currentRadio = key;
       });
-
-      audio.addEventListener("pause", () => {
-        if (currentRadio === key) {
-          card?.classList.remove("playing");
-          setStatus("متوقف شد");
-        }
-      });
-
+      audio.addEventListener("pause", () => { if (currentRadio === key) { card?.classList.remove("playing"); setStatus("متوقف شد"); } });
       audio.addEventListener("error", () => {
         if (manuallyStopped || audio.__isStopped || currentAudio !== audio) return;
-        if (sourceIndex + 1 < urls.length) {
-          sourceIndex += 1;
-          setStatus("تلاش برای اتصال به منبع جایگزین…");
-          audio.src = urls[sourceIndex];
-          audio.load();
-          audio.play().catch(() => {});
-          return;
-        }
-        card?.classList.remove("playing");
-        setStatus("پخش نشد؛ منبع در دسترس نیست");
-        byId("radioStatus").textContent = `پخش ${info.title} ممکن نشد.`;
-        currentRadio = null;
-        currentAudio = null;
+        if (sourceIndex + 1 < urls.length) { sourceIndex += 1; setStatus("تلاش برای اتصال به منبع جایگزین…"); audio.src = urls[sourceIndex]; audio.load(); audio.play().catch(() => {}); return; }
+        card?.classList.remove("playing"); setStatus("پخش نشد؛ منبع در دسترس نیست"); byId("radioStatus").textContent = `پخش ${info.title} ممکن نشد.`; currentRadio = null; currentAudio = null;
       });
-
       audio.addEventListener("waiting", () => setStatus("در حال بارگذاری…"));
       audio.addEventListener("stalled", () => setStatus("اتصال کند است…"));
-
       audio.play().catch(err => {
         if (manuallyStopped || audio.__isStopped || currentAudio !== audio) return;
         if (err && (err.name === "NotSupportedError" || err.name === "NetworkError") && sourceIndex + 1 < urls.length) {
-          sourceIndex += 1;
-          setStatus("تلاش برای منبع جایگزین…");
-          audio.src = urls[sourceIndex];
-          audio.load();
-          audio.play().catch(() => {});
-          return;
+          sourceIndex += 1; setStatus("تلاش برای منبع جایگزین…"); audio.src = urls[sourceIndex]; audio.load(); audio.play().catch(() => {}); return;
         }
-        card?.classList.remove("playing");
-        setStatus("اتصال به منبع پخش ناموفق بود");
+        card?.classList.remove("playing"); setStatus("اتصال به منبع پخش ناموفق بود");
       });
-
-      currentRadio = key;
-      currentAudio = audio;
+      currentRadio = key; currentAudio = audio;
     }
 
     function stopRadio() {
       if (currentAudio) {
         const audioToStop = currentAudio;
-        audioToStop.__isStopped = true;
-        audioToStop.pause();
-        audioToStop.removeAttribute("src");
-        audioToStop.load();
-        currentAudio = null;
+        audioToStop.__isStopped = true; audioToStop.pause(); audioToStop.removeAttribute("src"); audioToStop.load(); currentAudio = null;
       }
-      resetRadioCards();
-      currentRadio = null;
-      byId("radioStatus").textContent = "پخش متوقف شد.";
+      resetRadioCards(); currentRadio = null; byId("radioStatus").textContent = "پخش متوقف شد.";
     }
 
     function resetRadioCards() {
       document.querySelectorAll(".radio-card").forEach(card => {
         card.classList.remove("playing");
-        const st = card.querySelector(".radio-status");
-        if (st) st.textContent = "آمادهٔ پخش";
+        const st = card.querySelector(".radio-status"); if (st) st.textContent = "آمادهٔ پخش";
       });
     }
 
@@ -1262,15 +1194,10 @@
       return null;
     }
     function eventTime(body, observer, direction, start, days) {
-      try { return toDate(Astronomy.SearchRiseSet(body, observer, direction, start, days)); }
-      catch { return null; }
+      try { return toDate(Astronomy.SearchRiseSet(body, observer, direction, start, days)); } catch { return null; }
     }
     function fullDateTime(date) {
-      return new Intl.DateTimeFormat("fa-IR", {
-        timeZone: TIME_ZONE, calendar: "persian", weekday: "long",
-        year: "numeric", month: "long", day: "numeric",
-        hour: "2-digit", minute: "2-digit"
-      }).format(date);
+      return new Intl.DateTimeFormat("fa-IR", { timeZone: TIME_ZONE, calendar: "persian", weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(date);
     }
     function findFirstSunsetAfter(observer, conjunction) {
       const start = localMidnightUtc(conjunction);
@@ -1287,73 +1214,44 @@
       if (!moonset) return null;
       return localDateString(moonset) === localDateString(sunset) ? moonset : null;
     }
-
     function renderMoonEvents(now) {
-      const phases = [
-        { angle: 0, name: "مقارنه / ماه نو" },
-        { angle: 90, name: "تربیع اول" },
-        { angle: 180, name: "بدر / ماه کامل" },
-        { angle: 270, name: "تربیع آخر" }
-      ];
+      const phases = [{ angle: 0, name: "مقارنه / ماه نو" }, { angle: 90, name: "تربیع اول" }, { angle: 180, name: "بدر / ماه کامل" }, { angle: 270, name: "تربیع آخر" }];
       const events = [];
       for (const phase of phases) {
         try {
           const event = toDate(Astronomy.SearchMoonPhase(phase.angle, now, 32));
-          if (event && !Number.isNaN(event.getTime()) &&
-              event >= now && event <= new Date(now.getTime() + 30 * 86400000)) {
-            events.push({ date: event, name: phase.name });
-          }
+          if (event && !Number.isNaN(event.getTime()) && event >= now && event <= new Date(now.getTime() + 30 * 86400000)) events.push({ date: event, name: phase.name });
         } catch (e) { console.warn(e); }
       }
       events.sort((a, b) => a.date - b.date);
       const target = byId("moonEvents");
-      if (!events.length) {
-        target.textContent = "رویدادی در بازهٔ ۳۰ روز آینده پیدا نشد.";
-        return;
-      }
-      target.innerHTML = `<div class="event-list">${events.map((item, index) =>
-        `<article class="event-row"><span class="event-dot">${index + 1}</span><div><strong>${item.name}</strong><div class="event-date">${fullDateTime(item.date)}</div></div></article>`
-      ).join("")}</div>`;
+      if (!events.length) { target.textContent = "رویدادی در بازهٔ ۳۰ روز آینده پیدا نشد."; return; }
+      target.innerHTML = `<div class="event-list">${events.map((item, index) => `<article class="event-row"><span class="event-dot">${index + 1}</span><div><strong>${item.name}</strong><div class="event-date">${fullDateTime(item.date)}</div></div></article>`).join("")}</div>`;
     }
     function setMoonStatus(id, message) { byId(id).textContent = message; }
     function checkAstronomy(statusId) {
-      if (!window.Astronomy) {
-        setMoonStatus(statusId, "کتابخانهٔ نجومی بارگذاری نشده است.");
-        return false;
-      }
+      if (!window.Astronomy) { setMoonStatus(statusId, "کتابخانهٔ نجومی بارگذاری نشده است."); return false; }
       return true;
     }
-
     function calculateTodayMoon() {
-      const statusId = "todayMoonStatus";
-      if (!checkAstronomy(statusId)) return;
+      const statusId = "todayMoonStatus"; if (!checkAstronomy(statusId)) return;
       setMoonStatus(statusId, "در حال محاسبهٔ وضعیت امروز…");
       try {
-        const now = new Date();
-        const observer = new Astronomy.Observer(LATITUDE, LONGITUDE, 0);
-        const dayStart = localMidnightUtc(now);
-        const sunrise = eventTime("Sun", observer, +1, dayStart, 1);
-        const sunset = eventTime("Sun", observer, -1, dayStart, 1);
-        const moonrise = eventTime("Moon", observer, +1, dayStart, 1);
-        const moonset = eventTime("Moon", observer, -1, dayStart, 1);
+        const now = new Date(); const observer = new Astronomy.Observer(LATITUDE, LONGITUDE, 0); const dayStart = localMidnightUtc(now);
+        const sunrise = eventTime("Sun", observer, +1, dayStart, 1); const sunset = eventTime("Sun", observer, -1, dayStart, 1);
+        const moonrise = eventTime("Moon", observer, +1, dayStart, 1); const moonset = eventTime("Moon", observer, -1, dayStart, 1);
         byId("sunrise").textContent = sunrise ? formatClock(sunrise) : "محاسبه نشد";
         byId("sunset").textContent = sunset ? formatClock(sunset) : "محاسبه نشد";
         byId("moonrise").textContent = moonrise ? formatClock(moonrise) : "محاسبه نشد";
         byId("moonset").textContent = moonset ? formatClock(moonset) : "محاسبه نشد";
         setMoonStatus(statusId, `✓ محاسبهٔ وضعیت امروز انجام شد · ${fullDateTime(now)}`);
-      } catch (error) {
-        console.error(error);
-        setMoonStatus(statusId, "محاسبهٔ وضعیت امروز با خطا روبه‌رو شد.");
-      }
+      } catch (error) { console.error(error); setMoonStatus(statusId, "محاسبهٔ وضعیت امروز با خطا روبه‌رو شد."); }
     }
-
     function calculateNewMoon() {
-      const statusId = "newMoonStatus";
-      if (!checkAstronomy(statusId)) return;
+      const statusId = "newMoonStatus"; if (!checkAstronomy(statusId)) return;
       setMoonStatus(statusId, "در حال محاسبهٔ مقارنه…");
       try {
-        const now = new Date();
-        const observer = new Astronomy.Observer(LATITUDE, LONGITUDE, 0);
+        const now = new Date(); const observer = new Astronomy.Observer(LATITUDE, LONGITUDE, 0);
         const conjunction = toDate(Astronomy.SearchMoonPhase(0, now, 40));
         if (!conjunction || Number.isNaN(conjunction.getTime())) throw new Error("زمان مقارنه معتبر نیست");
         const firstSunset = findFirstSunsetAfter(observer, conjunction);
@@ -1362,194 +1260,151 @@
         if (firstSunset && firstSunset > conjunction) {
           byId("moonAge").textContent = formatHM((firstSunset - conjunction) / 60000);
           const moonsetNearSunset = findMoonsetOnSunsetDate(observer, firstSunset);
-          const moonsetEl = byId("newMoonMoonset");
-          const lagEl = byId("moonLag");
+          const moonsetEl = byId("newMoonMoonset"); const lagEl = byId("moonLag");
           if (moonsetNearSunset) {
             moonsetEl.textContent = fullDateTime(moonsetNearSunset);
             const lagMinutes = (moonsetNearSunset - firstSunset) / 60000;
             lagEl.textContent = formatHM(lagMinutes);
-            lagEl.classList.toggle("positive", lagMinutes >= 0);
-            lagEl.classList.toggle("negative", lagMinutes < 0);
-          } else {
-            moonsetEl.textContent = "—";
-            lagEl.textContent = "—";
-            lagEl.classList.remove("positive", "negative");
-          }
+            lagEl.classList.toggle("positive", lagMinutes >= 0); lagEl.classList.toggle("negative", lagMinutes < 0);
+          } else { moonsetEl.textContent = "—"; lagEl.textContent = "—"; lagEl.classList.remove("positive", "negative"); }
           try {
-            const moonVec = Astronomy.GeoVector("Moon", firstSunset, true);
-            const sunVec = Astronomy.GeoVector("Sun", firstSunset, true);
-            if (typeof Astronomy.AngleFromVectors === "function") {
-              const elong = Astronomy.AngleFromVectors(moonVec, sunVec);
-              byId("elongation").textContent = `${Number(elong).toFixed(2)}°`;
-            } else byId("elongation").textContent = "—";
+            const moonVec = Astronomy.GeoVector("Moon", firstSunset, true); const sunVec = Astronomy.GeoVector("Sun", firstSunset, true);
+            if (typeof Astronomy.AngleFromVectors === "function") { byId("elongation").textContent = `${Number(Astronomy.AngleFromVectors(moonVec, sunVec)).toFixed(2)}°`; } else byId("elongation").textContent = "—";
           } catch (_) { byId("elongation").textContent = "—"; }
-        } else {
-          byId("newMoonMoonset").textContent = "—";
-          byId("moonAge").textContent = "—";
-          byId("moonLag").textContent = "—";
-          byId("elongation").textContent = "—";
-        }
+        } else { byId("newMoonMoonset").textContent = "—"; byId("moonAge").textContent = "—"; byId("moonLag").textContent = "—"; byId("elongation").textContent = "—"; }
         renderMoonEvents(now);
         setMoonStatus(statusId, `✓ ماه نوِ آینده محاسبه شد.`);
-      } catch (error) {
-        console.error(error);
-        setMoonStatus(statusId, "محاسبهٔ ماه نو ناموفق بود.");
-      }
+      } catch (error) { console.error(error); setMoonStatus(statusId, "محاسبهٔ ماه نو ناموفق بود."); }
     }
 
-    /* ============ قرآن کریم ============ */
+    /* ============ قرآن کریم (صفحه‌محور با فونت QCF4) ============ */
     const SURAHS = [
-      { n: 1, name: "الفاتحة", ayahs: 7 }, { n: 2, name: "البقرة", ayahs: 286 },
-      { n: 3, name: "آل عمران", ayahs: 200 }, { n: 4, name: "النساء", ayahs: 176 },
-      { n: 5, name: "المائدة", ayahs: 120 }, { n: 6, name: "الأنعام", ayahs: 165 },
-      { n: 7, name: "الأعراف", ayahs: 206 }, { n: 8, name: "الأنفال", ayahs: 75 },
-      { n: 9, name: "التوبة", ayahs: 129 }, { n: 10, name: "يونس", ayahs: 109 },
-      { n: 11, name: "هود", ayahs: 123 }, { n: 12, name: "يوسف", ayahs: 111 },
-      { n: 13, name: "الرعد", ayahs: 43 }, { n: 14, name: "إبراهيم", ayahs: 52 },
-      { n: 15, name: "الحجر", ayahs: 99 }, { n: 16, name: "النحل", ayahs: 128 },
-      { n: 17, name: "الإسراء", ayahs: 111 }, { n: 18, name: "الكهف", ayahs: 110 },
-      { n: 19, name: "مريم", ayahs: 98 }, { n: 20, name: "طه", ayahs: 135 },
-      { n: 21, name: "الأنبياء", ayahs: 112 }, { n: 22, name: "الحج", ayahs: 78 },
-      { n: 23, name: "المؤمنون", ayahs: 118 }, { n: 24, name: "النور", ayahs: 64 },
-      { n: 25, name: "الفرقان", ayahs: 77 }, { n: 26, name: "الشعراء", ayahs: 227 },
-      { n: 27, name: "النمل", ayahs: 93 }, { n: 28, name: "القصص", ayahs: 88 },
-      { n: 29, name: "العنكبوت", ayahs: 69 }, { n: 30, name: "الروم", ayahs: 60 },
-      { n: 31, name: "لقمان", ayahs: 34 }, { n: 32, name: "السجدة", ayahs: 30 },
-      { n: 33, name: "الأحزاب", ayahs: 73 }, { n: 34, name: "سبأ", ayahs: 54 },
-      { n: 35, name: "فاطر", ayahs: 45 }, { n: 36, name: "يس", ayahs: 83 },
-      { n: 37, name: "الصافات", ayahs: 182 }, { n: 38, name: "ص", ayahs: 88 },
-      { n: 39, name: "الزمر", ayahs: 75 }, { n: 40, name: "غافر", ayahs: 85 },
-      { n: 41, name: "فصلت", ayahs: 54 }, { n: 42, name: "الشورى", ayahs: 53 },
-      { n: 43, name: "الزخرف", ayahs: 89 }, { n: 44, name: "الدخان", ayahs: 59 },
-      { n: 45, name: "الجاثية", ayahs: 37 }, { n: 46, name: "الأحقاف", ayahs: 35 },
-      { n: 47, name: "محمد", ayahs: 38 }, { n: 48, name: "الفتح", ayahs: 29 },
-      { n: 49, name: "الحجرات", ayahs: 18 }, { n: 50, name: "ق", ayahs: 45 },
-      { n: 51, name: "الذاريات", ayahs: 60 }, { n: 52, name: "الطور", ayahs: 49 },
-      { n: 53, name: "النجم", ayahs: 62 }, { n: 54, name: "القمر", ayahs: 55 },
-      { n: 55, name: "الرحمن", ayahs: 78 }, { n: 56, name: "الواقعة", ayahs: 96 },
-      { n: 57, name: "الحديد", ayahs: 29 }, { n: 58, name: "المجادلة", ayahs: 22 },
-      { n: 59, name: "الحشر", ayahs: 24 }, { n: 60, name: "الممتحنة", ayahs: 13 },
-      { n: 61, name: "الصف", ayahs: 14 }, { n: 62, name: "الجمعة", ayahs: 11 },
-      { n: 63, name: "المنافقون", ayahs: 11 }, { n: 64, name: "التغابن", ayahs: 18 },
-      { n: 65, name: "الطلاق", ayahs: 12 }, { n: 66, name: "التحريم", ayahs: 12 },
-      { n: 67, name: "الملك", ayahs: 30 }, { n: 68, name: "القلم", ayahs: 52 },
-      { n: 69, name: "الحاقة", ayahs: 52 }, { n: 70, name: "المعارج", ayahs: 44 },
-      { n: 71, name: "نوح", ayahs: 28 }, { n: 72, name: "الجن", ayahs: 28 },
-      { n: 73, name: "المزمل", ayahs: 20 }, { n: 74, name: "المدثر", ayahs: 56 },
-      { n: 75, name: "القيامة", ayahs: 40 }, { n: 76, name: "الإنسان", ayahs: 31 },
-      { n: 77, name: "المرسلات", ayahs: 50 }, { n: 78, name: "النبأ", ayahs: 40 },
-      { n: 79, name: "النازعات", ayahs: 46 }, { n: 80, name: "عبس", ayahs: 42 },
-      { n: 81, name: "التكوير", ayahs: 29 }, { n: 82, name: "الإنفطار", ayahs: 19 },
-      { n: 83, name: "المطففين", ayahs: 36 }, { n: 84, name: "الإنشقاق", ayahs: 25 },
-      { n: 85, name: "البروج", ayahs: 22 }, { n: 86, name: "الطارق", ayahs: 17 },
-      { n: 87, name: "الأعلى", ayahs: 19 }, { n: 88, name: "الغاشية", ayahs: 26 },
-      { n: 89, name: "الفجر", ayahs: 30 }, { n: 90, name: "البلد", ayahs: 20 },
-      { n: 91, name: "الشمس", ayahs: 15 }, { n: 92, name: "الليل", ayahs: 21 },
-      { n: 93, name: "الضحى", ayahs: 11 }, { n: 94, name: "الشرح", ayahs: 8 },
-      { n: 95, name: "التين", ayahs: 8 }, { n: 96, name: "العلق", ayahs: 19 },
-      { n: 97, name: "القدر", ayahs: 5 }, { n: 98, name: "البينة", ayahs: 8 },
-      { n: 99, name: "الزلزلة", ayahs: 8 }, { n: 100, name: "العاديات", ayahs: 11 },
-      { n: 101, name: "القارعة", ayahs: 11 }, { n: 102, name: "التكاثر", ayahs: 8 },
-      { n: 103, name: "العصر", ayahs: 3 }, { n: 104, name: "الهمزة", ayahs: 9 },
-      { n: 105, name: "الفيل", ayahs: 5 }, { n: 106, name: "قريش", ayahs: 4 },
-      { n: 107, name: "الماعون", ayahs: 7 }, { n: 108, name: "الكوثر", ayahs: 3 },
-      { n: 109, name: "الكافرون", ayahs: 6 }, { n: 110, name: "النصر", ayahs: 3 },
-      { n: 111, name: "المسد", ayahs: 5 }, { n: 112, name: "الإخلاص", ayahs: 4 },
-      { n: 113, name: "الفلق", ayahs: 5 }, { n: 114, name: "الناس", ayahs: 6 }
+      { n: 1, name: "الفاتحة", ayahs: 7, page: 1 }, { n: 2, name: "البقرة", ayahs: 286, page: 2 },
+      { n: 3, name: "آل عمران", ayahs: 200, page: 50 }, { n: 4, name: "النساء", ayahs: 176, page: 77 },
+      { n: 5, name: "المائدة", ayahs: 120, page: 106 }, { n: 6, name: "الأنعام", ayahs: 165, page: 128 },
+      { n: 7, name: "الأعراف", ayahs: 206, page: 151 }, { n: 8, name: "الأنفال", ayahs: 75, page: 177 },
+      { n: 9, name: "التوبة", ayahs: 129, page: 187 }, { n: 10, name: "يونس", ayahs: 109, page: 208 },
+      { n: 11, name: "هود", ayahs: 123, page: 221 }, { n: 12, name: "يوسف", ayahs: 111, page: 235 },
+      { n: 13, name: "الرعد", ayahs: 43, page: 249 }, { n: 14, name: "إبراهيم", ayahs: 52, page: 255 },
+      { n: 15, name: "الحجر", ayahs: 99, page: 262 }, { n: 16, name: "النحل", ayahs: 128, page: 267 },
+      { n: 17, name: "الإسراء", ayahs: 111, page: 282 }, { n: 18, name: "الكهف", ayahs: 110, page: 293 },
+      { n: 19, name: "مريم", ayahs: 98, page: 305 }, { n: 20, name: "طه", ayahs: 135, page: 312 },
+      { n: 21, name: "الأنبياء", ayahs: 112, page: 322 }, { n: 22, name: "الحج", ayahs: 78, page: 332 },
+      { n: 23, name: "المؤمنون", ayahs: 118, page: 342 }, { n: 24, name: "النور", ayahs: 64, page: 350 },
+      { n: 25, name: "الفرقان", ayahs: 77, page: 359 }, { n: 26, name: "الشعراء", ayahs: 227, page: 367 },
+      { n: 27, name: "النمل", ayahs: 93, page: 377 }, { n: 28, name: "القصص", ayahs: 88, page: 385 },
+      { n: 29, name: "العنكبوت", ayahs: 69, page: 396 }, { n: 30, name: "الروم", ayahs: 60, page: 404 },
+      { n: 31, name: "لقمان", ayahs: 34, page: 411 }, { n: 32, name: "السجدة", ayahs: 30, page: 415 },
+      { n: 33, name: "الأحزاب", ayahs: 73, page: 418 }, { n: 34, name: "سبأ", ayahs: 54, page: 428 },
+      { n: 35, name: "فاطر", ayahs: 45, page: 434 }, { n: 36, name: "يس", ayahs: 83, page: 440 },
+      { n: 37, name: "الصافات", ayahs: 182, page: 446 }, { n: 38, name: "ص", ayahs: 88, page: 453 },
+      { n: 39, name: "الزمر", ayahs: 75, page: 458 }, { n: 40, name: "غافر", ayahs: 85, page: 467 },
+      { n: 41, name: "فصلت", ayahs: 54, page: 477 }, { n: 42, name: "الشورى", ayahs: 53, page: 483 },
+      { n: 43, name: "الزخرف", ayahs: 89, page: 489 }, { n: 44, name: "الدخان", ayahs: 59, page: 496 },
+      { n: 45, name: "الجاثية", ayahs: 37, page: 499 }, { n: 46, name: "الأحقاف", ayahs: 35, page: 502 },
+      { n: 47, name: "محمد", ayahs: 38, page: 507 }, { n: 48, name: "الفتح", ayahs: 29, page: 511 },
+      { n: 49, name: "الحجرات", ayahs: 18, page: 515 }, { n: 50, name: "ق", ayahs: 45, page: 518 },
+      { n: 51, name: "الذاريات", ayahs: 60, page: 520 }, { n: 52, name: "الطور", ayahs: 49, page: 523 },
+      { n: 53, name: "النجم", ayahs: 62, page: 526 }, { n: 54, name: "القمر", ayahs: 55, page: 528 },
+      { n: 55, name: "الرحمن", ayahs: 78, page: 531 }, { n: 56, name: "الواقعة", ayahs: 96, page: 534 },
+      { n: 57, name: "الحديد", ayahs: 29, page: 537 }, { n: 58, name: "المجادلة", ayahs: 22, page: 542 },
+      { n: 59, name: "الحشر", ayahs: 24, page: 545 }, { n: 60, name: "الممتحنة", ayahs: 13, page: 549 },
+      { n: 61, name: "الصف", ayahs: 14, page: 551 }, { n: 62, name: "الجمعة", ayahs: 11, page: 553 },
+      { n: 63, name: "المنافقون", ayahs: 11, page: 554 }, { n: 64, name: "التغابن", ayahs: 18, page: 556 },
+      { n: 65, name: "الطلاق", ayahs: 12, page: 558 }, { n: 66, name: "التحريم", ayahs: 12, page: 560 },
+      { n: 67, name: "الملك", ayahs: 30, page: 562 }, { n: 68, name: "القلم", ayahs: 52, page: 564 },
+      { n: 69, name: "الحاقة", ayahs: 52, page: 566 }, { n: 70, name: "المعارج", ayahs: 44, page: 568 },
+      { n: 71, name: "نوح", ayahs: 28, page: 570 }, { n: 72, name: "الجن", ayahs: 28, page: 572 },
+      { n: 73, name: "المزمل", ayahs: 20, page: 574 }, { n: 74, name: "المدثر", ayahs: 56, page: 575 },
+      { n: 75, name: "القيامة", ayahs: 40, page: 577 }, { n: 76, name: "الإنسان", ayahs: 31, page: 578 },
+      { n: 77, name: "المرسلات", ayahs: 50, page: 580 }, { n: 78, name: "النبأ", ayahs: 40, page: 582 },
+      { n: 79, name: "النازعات", ayahs: 46, page: 583 }, { n: 80, name: "عبس", ayahs: 42, page: 585 },
+      { n: 81, name: "التكوير", ayahs: 29, page: 586 }, { n: 82, name: "الإنفطار", ayahs: 19, page: 587 },
+      { n: 83, name: "المطففين", ayahs: 36, page: 587 }, { n: 84, name: "الإنشقاق", ayahs: 25, page: 589 },
+      { n: 85, name: "البروج", ayahs: 22, page: 590 }, { n: 86, name: "الطارق", ayahs: 17, page: 591 },
+      { n: 87, name: "الأعلى", ayahs: 19, page: 591 }, { n: 88, name: "الغاشية", ayahs: 26, page: 592 },
+      { n: 89, name: "الفجر", ayahs: 30, page: 593 }, { n: 90, name: "البلد", ayahs: 20, page: 594 },
+      { n: 91, name: "الشمس", ayahs: 15, page: 595 }, { n: 92, name: "الليل", ayahs: 21, page: 595 },
+      { n: 93, name: "الضحى", ayahs: 11, page: 596 }, { n: 94, name: "الشرح", ayahs: 8, page: 596 },
+      { n: 95, name: "التين", ayahs: 8, page: 597 }, { n: 96, name: "العلق", ayahs: 19, page: 597 },
+      { n: 97, name: "القدر", ayahs: 5, page: 598 }, { n: 98, name: "البينة", ayahs: 8, page: 598 },
+      { n: 99, name: "الزلزلة", ayahs: 8, page: 599 }, { n: 100, name: "العاديات", ayahs: 11, page: 599 },
+      { n: 101, name: "القارعة", ayahs: 11, page: 600 }, { n: 102, name: "التكاثر", ayahs: 8, page: 600 },
+      { n: 103, name: "العصر", ayahs: 3, page: 601 }, { n: 104, name: "الهمزة", ayahs: 9, page: 601 },
+      { n: 105, name: "الفيل", ayahs: 5, page: 601 }, { n: 106, name: "قريش", ayahs: 4, page: 602 },
+      { n: 107, name: "الماعون", ayahs: 7, page: 602 }, { n: 108, name: "الكوثر", ayahs: 3, page: 602 },
+      { n: 109, name: "الكافرون", ayahs: 6, page: 603 }, { n: 110, name: "النصر", ayahs: 3, page: 603 },
+      { n: 111, name: "المسد", ayahs: 5, page: 603 }, { n: 112, name: "الإخلاص", ayahs: 4, page: 604 },
+      { n: 113, name: "الفلق", ayahs: 5, page: 604 }, { n: 114, name: "الناس", ayahs: 6, page: 604 }
     ];
 
-    let currentSurah = 1;
-    let quranCache = {};
+    let currentPage = 1;
+    let totalPages = 604;
+    let quranPageCache = {};
 
     function initQuran() {
-      const select = byId("surahSelect");
-      if (!select) return;
-      SURAHS.forEach(s => {
-        const opt = document.createElement("option");
-        opt.value = s.n;
-        opt.textContent = `${s.n}. سورهٔ ${s.name} (${s.ayahs} آیه)`;
-        select.appendChild(opt);
-      });
-      select.value = 1;
+      const listEl = byId("quranSurahList");
+      listEl.innerHTML = SURAHS.map(s => `
+        <div class="quran-surah-item" data-surah="${s.n}" data-page="${s.page}">
+          <span class="s-num">${s.n}</span>
+          <span class="s-name">${s.name}</span>
+          <span class="s-ayahs">${s.ayahs} آیه</span>
+        </div>
+      `).join("");
 
-      select.addEventListener("change", () => {
-        currentSurah = Number(select.value);
-        loadSurah(currentSurah);
+      listEl.querySelectorAll(".quran-surah-item").forEach(item => {
+        item.addEventListener("click", () => {
+          listEl.querySelectorAll(".quran-surah-item").forEach(el => el.classList.remove("active"));
+          item.classList.add("active");
+          currentPage = Number(item.dataset.page);
+          loadQuranPage(currentPage);
+        });
       });
-      byId("quranPrev").addEventListener("click", () => {
-        if (currentSurah > 1) {
-          currentSurah--;
-          select.value = currentSurah;
-          loadSurah(currentSurah);
-        }
-      });
-      byId("quranNext").addEventListener("click", () => {
-        if (currentSurah < 114) {
-          currentSurah++;
-          select.value = currentSurah;
-          loadSurah(currentSurah);
-        }
-      });
-      byId("quranBismillah").addEventListener("click", () => {
-        currentSurah = 1;
-        select.value = 1;
-        loadSurah(1);
-      });
+
+      byId("quranPrevPage").addEventListener("click", () => { if (currentPage > 1) { currentPage--; loadQuranPage(currentPage); } });
+      byId("quranNextPage").addEventListener("click", () => { if (currentPage < totalPages) { currentPage++; loadQuranPage(currentPage); } });
     }
 
-    async function loadSurah(num) {
+    async function loadQuranPage(pageNum) {
       const textEl = byId("quranText");
       const statusEl = byId("quranStatus");
-      const surah = SURAHS.find(s => s.n === num);
-      if (!surah) return;
-      statusEl.textContent = `در حال دریافت سورهٔ ${surah.name}…`;
+      const indicator = byId("quranPageIndicator");
+      indicator.textContent = `صفحه ${pageNum}`;
+      statusEl.textContent = `در حال دریافت صفحهٔ ${pageNum}…`;
       textEl.innerHTML = '<div class="quran-loading">⏳ در حال بارگذاری…</div>';
 
-      if (quranCache[num]) {
-        renderSurah(quranCache[num], num);
-        statusEl.textContent = `✓ سورهٔ ${surah.name} · ${surah.ayahs} آیه`;
+      if (quranPageCache[pageNum]) {
+        renderQuranPage(quranPageCache[pageNum], pageNum);
+        statusEl.textContent = `✓ صفحهٔ ${pageNum} از ${totalPages}`;
         return;
       }
+
       try {
-        const url = `https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${num}`;
+        const url = `https://api.quran.com/api/v4/verses/by_page/${pageNum}?fields=text_uthmani,page_number,juz_number&per_page=50`;
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (!data.verses || !data.verses.length) throw new Error("پاسخی دریافت نشد");
-        quranCache[num] = data.verses;
-        renderSurah(data.verses, num);
-        statusEl.textContent = `✓ سورهٔ ${surah.name} · ${surah.ayahs} آیه`;
+        quranPageCache[pageNum] = data.verses;
+        renderQuranPage(data.verses, pageNum);
+        statusEl.textContent = `✓ صفحهٔ ${pageNum} از ${totalPages}`;
       } catch (err) {
         console.error(err);
-        try {
-          statusEl.textContent = "تلاش برای منبع جایگزین…";
-          const altUrl = `https://api.alquran.cloud/v1/surah/${num}/quran-uthmani`;
-          const altRes = await fetch(altUrl);
-          const altData = await altRes.json();
-          if (altData.code === 200 && altData.data?.ayahs) {
-            quranCache[num] = altData.data.ayahs.map(a => ({
-              text_uthmani: a.text,
-              verse_key: `${num}:${a.numberInSurah}`
-            }));
-            renderSurah(quranCache[num], num);
-            statusEl.textContent = `✓ سورهٔ ${surah.name} · ${surah.ayahs} آیه`;
-            return;
-          }
-        } catch (altErr) { console.error(altErr); }
-        textEl.innerHTML = '<div class="quran-loading">❌ دریافت سوره ناموفق بود.</div>';
+        textEl.innerHTML = '<div class="quran-loading">❌ دریافت صفحه ناموفق بود. اتصال اینترنت را بررسی کنید.</div>';
         statusEl.textContent = "خطا در دریافت اطلاعات";
       }
     }
 
-    function renderSurah(verses, surahNum) {
+    function renderQuranPage(verses, pageNum) {
       const textEl = byId("quranText");
-      const surah = SURAHS.find(s => s.n === surahNum);
-      const showBismillah = surahNum !== 1 && surahNum !== 9;
+      const firstSurahNum = Number((verses[0].verse_key || "").split(":")[0]);
+      const surah = SURAHS.find(s => s.n === firstSurahNum);
+      const showBismillah = pageNum === 1 || (firstSurahNum !== 1 && firstSurahNum !== 9);
 
       function highlightJallah(text) {
         return text.replace(
           /((?:^|\s)(?:و|ف|ب|ل|ت|ال)?(?:لله|الله|اللَّه|اللَّهِ|اللَّهُ)(?=\s|$))/g,
-          ' <span class="jallah">$1</span> '
+          ' <span class="jallah-glyph">$1</span> '
         );
       }
 
@@ -1561,34 +1416,25 @@
       }).join("");
 
       textEl.innerHTML = `
-        <span class="surah-header">${surah ? `سورهٔ ${surah.name} · ${surah.ayahs} آیه` : ""}</span>
-        ${showBismillah ? '<div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>' : ""}
-        <div class="quran-verses">${ayahsHtml}</div>`;
+        <div class="quran-page">
+          ${surah && pageNum === surah.page ? `<span class="surah-header">سورهٔ ${surah.name} · ${surah.ayahs} آیه</span>` : ""}
+          ${showBismillah ? '<div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>' : ""}
+          <div class="mushaf-line">${ayahsHtml}</div>
+        </div>`;
       textEl.scrollTop = 0;
     }
 
     function setupSettings() {
-      byId("adhkarEnabled").addEventListener("change", event => {
-        settings.adhkarEnabled = event.target.checked; saveSettings();
-      });
-      byId("alertsEnabled").addEventListener("change", event => {
-        settings.alertsEnabled = event.target.checked; saveSettings();
-      });
+      byId("adhkarEnabled").addEventListener("change", event => { settings.adhkarEnabled = event.target.checked; saveSettings(); });
+      byId("alertsEnabled").addEventListener("change", event => { settings.alertsEnabled = event.target.checked; saveSettings(); });
       byId("hijriAdjustment").addEventListener("change", event => {
         settings.hijriAdjustment = Math.max(-2, Math.min(2, Number(event.target.value) || 0));
-        event.target.value = settings.hijriAdjustment;
-        saveSettings(); loadDateHeader();
+        event.target.value = settings.hijriAdjustment; saveSettings(); loadDateHeader();
       });
-      byId("themeColor").addEventListener("input", event => {
-        settings.themeColor = event.target.value; saveSettings(); applyTheme();
-      });
-      byId("backgroundColor").addEventListener("input", event => {
-        settings.backgroundColor = event.target.value; saveSettings(); applyTheme();
-      });
+      byId("themeColor").addEventListener("input", event => { settings.themeColor = event.target.value; saveSettings(); applyTheme(); });
+      byId("backgroundColor").addEventListener("input", event => { settings.backgroundColor = event.target.value; saveSettings(); applyTheme(); });
       byId("notifyPermission").addEventListener("click", async () => {
-        if (!("Notification" in window)) {
-          alert("اعلان‌های مرورگر در این دستگاه پشتیبانی نمی‌شوند."); return;
-        }
+        if (!("Notification" in window)) { alert("اعلان‌های مرورگر در این دستگاه پشتیبانی نمی‌شوند."); return; }
         const result = await Notification.requestPermission();
         alert(result === "granted" ? "اعلان‌ها فعال شدند." : "اجازهٔ اعلان‌ها داده نشد.");
       });
@@ -1597,22 +1443,16 @@
     }
 
     window.addEventListener("beforeinstallprompt", event => {
-      event.preventDefault();
-      deferredInstallPrompt = event;
-      byId("installButton").classList.remove("hidden");
+      event.preventDefault(); deferredInstallPrompt = event; byId("installButton").classList.remove("hidden");
     });
     byId("installButton").addEventListener("click", async () => {
       if (!deferredInstallPrompt) return;
-      deferredInstallPrompt.prompt();
-      await deferredInstallPrompt.userChoice;
-      deferredInstallPrompt = null;
-      byId("installButton").classList.add("hidden");
+      deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null; byId("installButton").classList.add("hidden");
     });
 
     if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js").catch(console.error);
-      });
+      window.addEventListener("load", () => { navigator.serviceWorker.register("./sw.js").catch(console.error); });
     }
 
     setupTabs();
@@ -1627,10 +1467,7 @@
     setInterval(() => {
       const currentDate = localDateString();
       if (window.lastPrayerDate !== currentDate) {
-        window.lastPrayerDate = currentDate;
-        notifiedKeys.clear();
-        loadDateHeader();
-        loadPrayerTimes();
+        window.lastPrayerDate = currentDate; notifiedKeys.clear(); loadDateHeader(); loadPrayerTimes();
       }
     }, 60000);
   </script>
