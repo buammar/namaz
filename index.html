@@ -1,3 +1,5 @@
+[file name]: index.html
+[file content begin]
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
@@ -157,33 +159,6 @@
     @keyframes blink {
       0%,100% { opacity: 1; transform: scale(1); }
       50% { opacity: .35; transform: scale(.7); }
-    }
-
-    .countdown-card {
-      position: relative; overflow: hidden; border: 0; color: #fff;
-      background: linear-gradient(135deg, #241b4d 0%, #4d3ec0 45%, #c1479b 100%);
-      box-shadow: 0 20px 42px -14px rgba(77, 62, 192, .7);
-    }
-    .countdown-card::before {
-      content: ""; position: absolute; top: -80px; right: -60px;
-      width: 240px; height: 240px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,.22), transparent 65%);
-    }
-    .countdown-card::after {
-      content: ""; position: absolute; bottom: -100px; left: -40px;
-      width: 220px; height: 220px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,189,89,.35), transparent 68%);
-    }
-    .countdown-card h2 { color: #fff; }
-    .countdown-card h2::before { background: linear-gradient(180deg, #ffd88a, #ff8fc0); }
-    .countdown-card .label { color: rgba(255,255,255,.8); position: relative; }
-    .countdown-card .note { color: rgba(255,255,255,.62); position: relative; }
-    .countdown {
-      font-size: clamp(1.9rem, 8vw, 2.8rem); color: #fff; font-weight: 900;
-      direction: ltr; text-align: right; margin-top: 10px;
-      letter-spacing: 2px; font-variant-numeric: tabular-nums;
-      text-shadow: 0 4px 22px rgba(255,255,255,.35);
-      position: relative;
     }
 
     .moon-item strong {
@@ -376,13 +351,6 @@
           <p class="status">در حال دریافت اوقات نماز…</p>
         </div>
         <p id="prayerStatus" class="status"></p>
-      </div>
-
-      <div class="card countdown-card">
-        <h2>شمارش معکوس تا اقامهٔ بعدی</h2>
-        <div id="nextPrayerName" class="label">در حال محاسبه…</div>
-        <div id="countdown" class="countdown">--:--:--</div>
-        <p class="note">زمان اقامه بر اساس تأخیرهای تنظیم‌شده محاسبه می‌شود.</p>
       </div>
     </section>
 
@@ -687,6 +655,7 @@
 
     const PRAYERS = [
       { key: "Fajr",    name: "فجر",  icon: "sunrise",  c1: "#6366f1", c2: "#a5b4fc" },
+      { key: "Sunrise", name: "طلوع خورشید", icon: "sunrise", c1: "#f97316", c2: "#fdba74" },
       { key: "Dhuhr",   name: "ظهر",  icon: "sun",      c1: "#f59e0b", c2: "#fcd34d" },
       { key: "Asr",     name: "عصر",  icon: "cloudsun", c1: "#0ea5e9", c2: "#7dd3fc" },
       { key: "Maghrib", name: "مغرب", icon: "sunset",   c1: "#ec4899", c2: "#f9a8d4" },
@@ -694,7 +663,6 @@
     ];
 
     /* ---------- منابع رادیو قرآن ---------- */
-    /* در صورت نیاز به تعویض، فقط URL را جایگزین کنید. */
     const RADIOS = {
       afasy: {
         title: "رادیو قرآن مشاری العفاسی",
@@ -758,7 +726,6 @@
     let settings = loadSettings();
     let prayerData = null;
     let deferredInstallPrompt = null;
-    let notifiedKeys = new Set();
 
     function loadSettings() {
       try {
@@ -845,7 +812,9 @@
       if (!prayerData) return;
       const grid = byId("prayerGrid");
       const now = new Date();
-      const upcoming = PRAYERS.map(p => {
+      // فقط نمازهای واجب برای تشخیص «نماز بعدی» در نظر گرفته می‌شوند (طلوع خورشید وقت نماز نیست)
+      const prayerKeys = PRAYERS.filter(p => p.key !== "Sunrise");
+      const upcoming = prayerKeys.map(p => {
         const time = tehranTimeToDate(prayerData.timings[p.key], now);
         return time ? { ...p, iqama: new Date(time.getTime() + Number(settings.iqama[p.key] || 0) * 60000) } : null;
       }).filter(Boolean);
@@ -853,24 +822,24 @@
 
       grid.innerHTML = PRAYERS.map(prayer => {
         const time = tehranTimeToDate(prayerData.timings[prayer.key], now);
-        const iqama = time ? new Date(time.getTime() + Number(settings.iqama[prayer.key] || 0) * 60000) : null;
+        // طلوع خورشید اقامه ندارد
+        const hasIqama = prayer.key !== "Sunrise";
+        const iqama = hasIqama && time
+          ? new Date(time.getTime() + Number(settings.iqama[prayer.key] || 0) * 60000)
+          : null;
         const isNext = next && next.key === prayer.key;
         return `
           <article class="prayer ${isNext ? "next" : ""}" style="--c1:${prayer.c1};--c2:${prayer.c2}">
             <div class="p-icon">${ICONS[prayer.icon]}</div>
             <div class="label">${prayer.name}</div>
             <div class="value">${time ? formatClock(time) : "—"}</div>
-            <div class="subvalue">اقامه: ${iqama ? formatClock(iqama) : "—"}</div>
+            ${hasIqama ? `<div class="subvalue">اقامه: ${iqama ? formatClock(iqama) : "—"}</div>` : ""}
           </article>`;
       }).join("");
-
-      byId("nextPrayerName").textContent = next
-        ? `اقامهٔ ${next.name} · ${formatClock(next.iqama)}`
-        : "اقامه‌های امروز به پایان رسیده‌اند";
     }
 
     function renderIqamaSettings() {
-      byId("iqamaSettings").innerHTML = PRAYERS.map(p => `
+      byId("iqamaSettings").innerHTML = PRAYERS.filter(p => p.key !== "Sunrise").map(p => `
         <label class="setting">
           تأخیر اقامهٔ ${p.name} (دقیقه)
           <input type="number" min="0" max="120" step="1"
@@ -899,59 +868,6 @@
       document.documentElement.style.setProperty("--primary", settings.themeColor);
       document.documentElement.style.setProperty("--background", settings.backgroundColor);
       document.querySelector('meta[name="theme-color"]')?.setAttribute("content", settings.themeColor);
-    }
-
-    function updateCountdown() {
-      if (!prayerData) return;
-      const now = new Date();
-      const upcoming = PRAYERS.map(p => {
-        const prayerTime = tehranTimeToDate(prayerData.timings[p.key], now);
-        return prayerTime ? { ...p, iqama: new Date(prayerTime.getTime() + Number(settings.iqama[p.key] || 0) * 60000) } : null;
-      }).filter(Boolean).find(p => p.iqama > now);
-
-      if (!upcoming) {
-        byId("nextPrayerName").textContent = "اقامه‌های امروز به پایان رسیده‌اند";
-        byId("countdown").textContent = "--:--:--";
-        return;
-      }
-      const seconds = Math.max(0, Math.floor((upcoming.iqama - now) / 1000));
-      const hours = String(Math.floor(seconds / 3600)).padStart(2, "0");
-      const minutes = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
-      const remain = String(seconds % 60).padStart(2, "0");
-      byId("nextPrayerName").textContent = `تا اقامهٔ ${upcoming.name} · ${formatClock(upcoming.iqama)}`;
-      byId("countdown").textContent = `${hours}:${minutes}:${remain}`;
-      checkReminders(now, upcoming);
-    }
-
-    function sendNotification(title, body, key) {
-      if (notifiedKeys.has(key)) return;
-      notifiedKeys.add(key);
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(title, { body, icon: "./icon-192.png" });
-      } else {
-        alert(`${title}\n${body}`);
-      }
-    }
-
-    function checkReminders(now, upcoming) {
-      const today = localDateString(now);
-      if (settings.alertsEnabled && upcoming) {
-        const alertAt = new Date(upcoming.iqama.getTime() - 10 * 60000);
-        const key = `iqama-${today}-${upcoming.key}`;
-        if (now >= alertAt && now < upcoming.iqama && !notifiedKeys.has(key)) {
-          sendNotification("یادآوری اقامه", `۱۰ دقیقه تا اقامهٔ ${upcoming.name} باقی مانده است.`, key);
-        }
-      }
-      if (settings.adhkarEnabled && prayerData?.timings?.Maghrib) {
-        const maghrib = tehranTimeToDate(prayerData.timings.Maghrib, now);
-        if (maghrib) {
-          const reminderAt = new Date(maghrib.getTime() - 30 * 60000);
-          const key = `adhkar-${today}`;
-          if (now >= reminderAt && now < maghrib && !notifiedKeys.has(key)) {
-            sendNotification("یادآوری اذکار", "۳۰ دقیقه تا مغرب باقی مانده است.", key);
-          }
-        }
-      }
     }
 
     function setupTabs() {
@@ -1083,7 +999,6 @@
       });
 
       audio.addEventListener("error", () => {
-        // Ignore errors caused by the user pressing Stop or by switching stations.
         if (manuallyStopped || audio.__isStopped || currentAudio !== audio) return;
         if (sourceIndex + 1 < urls.length) {
           sourceIndex += 1;
@@ -1135,8 +1050,6 @@
     function stopRadio() {
       if (currentAudio) {
         const audioToStop = currentAudio;
-        // Mark it as manually stopped before clearing the source so the error
-        // handler cannot mistake this for a failed stream and start a fallback.
         audioToStop.__isStopped = true;
         audioToStop.pause();
         audioToStop.removeAttribute("src");
@@ -1190,12 +1103,9 @@
       return null;
     }
     function findMoonsetOnSunsetDate(observer, sunset) {
-      // مکث ماه باید بر اساس غروب ماه در همان تاریخِ اولین غروب خورشید پس از مقارنه باشد.
-      // اگر ماه پیش از خورشید غروب کرده باشد، اختلاف منفی خواهد بود.
       const dayStart = localMidnightUtc(sunset);
       const moonset = eventTime("Moon", observer, -1, dayStart, 1);
       if (!moonset) return null;
-      // از پذیرفتن غروب ماهِ روز قبل یا روز بعد جلوگیری می‌کنیم.
       return localDateString(moonset) === localDateString(sunset) ? moonset : null;
     }
 
@@ -1364,12 +1274,10 @@
     renderSettings();
     loadDateHeader();
     loadPrayerTimes();
-    setInterval(updateCountdown, 1000);
     setInterval(() => {
       const currentDate = localDateString();
       if (window.lastPrayerDate !== currentDate) {
         window.lastPrayerDate = currentDate;
-        notifiedKeys.clear();
         loadDateHeader();
         loadPrayerTimes();
       }
