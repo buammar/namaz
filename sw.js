@@ -1,4 +1,4 @@
-const CACHE_NAME = "awqat-soza-v4";
+const CACHE_NAME = "awqat-soza-v5";
 const APP_SHELL = [
   "./",
   "./index.html",
