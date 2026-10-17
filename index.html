@@ -131,6 +131,16 @@
     .mushaf-fullscreen:fullscreen { background: #0d0a17; }
     .mushaf-fullscreen:-webkit-full-screen { background: #0d0a17; }
 
+    .source-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(135px,1fr)); gap:10px; margin:12px 0 18px; }
+    .source-card { border:1px solid var(--border); border-radius:15px; padding:10px; background:#fff; text-align:center; color:var(--text); box-shadow:none; }
+    .source-card img { width:100%; height:145px; object-fit:contain; background:#f5edda; border-radius:8px; display:block; margin-bottom:8px; }
+    .source-card.selected { border:2px solid #0ea472; background:#f0fff8; }
+    .adhkar-list { display:grid; gap:12px; }
+    .dhikr-item { padding:15px; border:1px solid var(--border); border-radius:18px; background:#fff; }
+    .dhikr-text { font-size:1.25rem; line-height:2.1; font-family:Tahoma,serif; text-align:justify; }
+    .dhikr-meta { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:.88rem; margin-top:8px; }
+    .tasbih-count { font-size:3rem; font-weight:900; text-align:center; font-variant-numeric:tabular-nums; padding:12px; }
+    .tasbih-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
     .surah-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 10px; }
     .surah-card {
       display: flex; align-items: center; gap: 10px;
@@ -446,6 +456,7 @@
       <div class="section-grid" aria-label="بخش‌های برنامه">
         <button class="section-card" type="button" data-open="mushafPanel"><span class="section-icon">📖</span><strong>مصحف شریف</strong><small>صفحات تصویری قرآن کریم</small></button>
         <button class="section-card" type="button" data-open="radioPanel"><span class="section-icon">🎧</span><strong>رادیو قرآن</strong><small>تلاوت قاریان</small></button>
+        <button class="section-card" type="button" data-open="adhkarPanel"><span class="section-icon">📿</span><strong>اذکار</strong><small>صبحگاهی، شامگاهی و تسبیح هوشمند</small></button>
         <button class="section-card" type="button" data-open="moonPanel"><span class="section-icon">🌙</span><strong>رویدادهای نجومی</strong><small>وضعیت ماه و مکث ماه</small></button>
         <button class="section-card" type="button" data-open="settingsPanel"><span class="section-icon">⚙️</span><strong>تنظیمات</strong><small>اقامه، اعلان‌ها و ظاهر</small></button>
       </div>
@@ -486,12 +497,42 @@
           <p id="mushafStatus" class="mushaf-caption" aria-live="polite">در حال بارگذاری…</p>
         </div>
 
+        <h3 style="margin-top:20px">🖼️ انتخاب منبع صفحات با پیش‌نمایش</h3>
+        <p class="note">یکی از سه منبع را انتخاب کنید. انتخاب شما ذخیره می‌شود؛ اگر منبع انتخابی در دسترس نباشد، برنامه منابع دیگر را نیز امتحان می‌کند.</p>
+        <div id="mushafSourcePicker" class="source-grid"></div>
         <p class="mushaf-caption" style="margin-top:14px">برای جابجایی صفحه، روی تصویر بکشید (Swipe) یا از فهرست سوره‌ها استفاده کنید.</p>
 
         <h3 style="margin-top:22px">📚 فهرست سوره‌ها</h3>
         <div id="surahList" class="surah-list"></div>
 
-        <p class="mushaf-caption">تصاویر صفحات از مخزن QuranHub بارگذاری می‌شوند؛ برای نمایش صفحات به اینترنت نیاز است.</p>
+        <p class="mushaf-caption">تصاویر صفحات از منبع انتخابی بارگذاری می‌شوند؛ برای نمایش صفحات و پیش‌نمایش‌ها اتصال اینترنت لازم است.</p>
+      </div>
+    </section>
+
+    <section id="adhkarPanel" class="hidden">
+      <div class="panel-top"><h2>اذکار و تسبیح</h2><button class="secondary" type="button" data-open="homePanel">⌂ خانه</button></div>
+      <div class="card">
+        <h2>🌅 اذکار صبحگاهی</h2>
+        <p class="note">ذکرهای کوتاه و رایج برای یادآوری روزانه. تعداد پیشنهادی کنار هر ذکر آمده است.</p>
+        <div id="morningAdhkar" class="adhkar-list"></div>
+      </div>
+      <div class="card">
+        <h2>🌇 اذکار شامگاهی</h2>
+        <div id="eveningAdhkar" class="adhkar-list"></div>
+      </div>
+      <div class="card">
+        <h2>📿 تسبیح هوشمند</h2>
+        <p class="note">شمارش با لمس دکمه انجام می‌شود و پس از بستن صفحه نیز شمارش در همین دستگاه می‌ماند.</p>
+        <label class="setting">ذکر مورد نظر
+          <select id="tasbihPhrase"><option>سُبْحَانَ اللَّهِ</option><option>الْحَمْدُ لِلَّهِ</option><option>اللَّهُ أَكْبَرُ</option><option>أَسْتَغْفِرُ اللَّهَ</option><option>لَا إِلَهَ إِلَّا اللَّهُ</option><option>اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ</option></select>
+        </label>
+        <label class="setting" style="margin-top:12px">هدف شمارش
+          <select id="tasbihTarget"><option value="33">۳۳</option><option value="100" selected>۱۰۰</option><option value="300">۳۰۰</option><option value="1000">۱۰۰۰</option><option value="0">بدون هدف</option></select>
+        </label>
+        <div id="tasbihPhrasePreview" class="dhikr-text" style="text-align:center;margin-top:14px">سُبْحَانَ اللَّهِ</div>
+        <div id="tasbihCount" class="tasbih-count">۰</div>
+        <p id="tasbihStatus" class="status" style="text-align:center">برای شروع دکمه را لمس کنید.</p>
+        <div class="tasbih-actions"><button id="tasbihTap" type="button" style="min-width:150px;min-height:64px;font-size:1.1rem">+ یک ذکر</button><button id="tasbihUndo" class="secondary" type="button">یک مرحله برگشت</button><button id="tasbihReset" class="secondary" type="button">شروع مجدد</button></div>
       </div>
     </section>
 
@@ -861,10 +902,12 @@
     /* ---------- منابع تصویر مصحف (به ترتیب اولویت) ----------
        منبع اصلی: QuranHub — بدون صفر ابتدایی، مثل: 1.png، 2.png ... 604.png */
     const MUSHAF_SOURCES = [
-      (page) => `https://cdn.jsdelivr.net/gh/QuranHub/quran-pages-images@main/ayat/hafs/${page}.png`,
-      (page) => `https://static.qurancdn.com/images/pages/${String(page).padStart(3, "0")}.png`,
-      (page) => `https://quran-images.pages.dev/${String(page).padStart(3, "0")}.png`
+      { name: "QuranHub · حفص", description: "منبع فعلی · صفحات مصحف", url: page => `https://cdn.jsdelivr.net/gh/QuranHub/quran-pages-images@main/ayat/hafs/${page}.png` },
+      { name: "myQuran CDN", description: "منبع جایگزین ۱ · تصویر صفحات", url: page => `https://cdn.myquran.com/img/page/${page}.png` },
+      { name: "Islam-DB · مصحف مدینه", description: "منبع جایگزین ۲ · تصویر صفحات", url: page => `https://quran.islam-db.com/data/pages/quranpages_1024/images/page${String(page).padStart(3, "0")}.png` }
     ];
+    const MUSHAF_SOURCE_KEY = "suza-mushaf-source-index";
+    let selectedMushafSource = 0;
 
     let settings = loadSettings();
     let prayerData = null;
@@ -1153,7 +1196,7 @@
     }
 
     function setupNavigation() {
-      const panels = ["homePanel", "mushafPanel", "moonPanel", "radioPanel", "settingsPanel"];
+      const panels = ["homePanel", "mushafPanel", "moonPanel", "radioPanel", "settingsPanel", "adhkarPanel"];
       document.querySelectorAll("[data-open]").forEach(button => {
         button.addEventListener("click", () => {
           const target = button.dataset.open;
@@ -1177,35 +1220,22 @@
       if (!image) return;
       if (statusEl) statusEl.textContent = `در حال بارگذاری صفحهٔ ${next} از ۶۰۴…`;
       image.alt = `صفحهٔ ${next} مصحف شریف، روایت حفص`;
-
-      let sourceIndex = 0;
-      const totalSources = MUSHAF_SOURCES.length;
-
+      const order = [selectedMushafSource, ...MUSHAF_SOURCES.map((_, i) => i).filter(i => i !== selectedMushafSource)];
+      let attempt = 0;
       function tryLoad() {
-        if (sourceIndex >= totalSources) {
+        if (attempt >= order.length) {
           if (statusEl) statusEl.textContent = `بارگذاری صفحهٔ ${next} ناموفق بود. اتصال اینترنت را بررسی کنید.`;
           return;
         }
-        const url = MUSHAF_SOURCES[sourceIndex](next);
-        if (statusEl && sourceIndex > 0) {
-          statusEl.textContent = `منبع قبلی پاسخ نداد؛ تلاش با منبع ${sourceIndex + 1} از ${totalSources}…`;
-        }
-        image.src = url;
+        const sourceIndex = order[attempt];
+        if (statusEl) statusEl.textContent = attempt === 0 ? `در حال بارگذاری صفحهٔ ${next} از ${MUSHAF_SOURCES[sourceIndex].name}…` : `منبع انتخابی در دسترس نبود؛ تلاش با ${MUSHAF_SOURCES[sourceIndex].name}…`;
+        image.src = MUSHAF_SOURCES[sourceIndex].url(next);
       }
-
-      image.onerror = () => {
-        sourceIndex += 1;
-        tryLoad();
-      };
-
+      image.onerror = () => { attempt += 1; tryLoad(); };
       image.onload = () => {
         if (statusEl) statusEl.textContent = `صفحهٔ ${next} از ۶۰۴ · روایت حفص`;
-        if (fullscreenImage) {
-          fullscreenImage.src = image.src;
-          fullscreenImage.alt = image.alt;
-        }
+        if (fullscreenImage) { fullscreenImage.src = image.src; fullscreenImage.alt = image.alt; }
       };
-
       tryLoad();
       try { localStorage.setItem("suza-mushaf-last-page", String(next)); } catch {}
     }
@@ -1381,13 +1411,94 @@
       });
     }
 
+    function renderMushafSources() {
+      const picker = byId("mushafSourcePicker");
+      if (!picker) return;
+      picker.innerHTML = MUSHAF_SOURCES.map((source, index) => `<div class="source-card ${index === selectedMushafSource ? "selected" : ""}" data-source="${index}"><img loading="lazy" data-preview-source="${index}" src="${source.url(mushafPage || 1)}" alt="پیش‌نمایش ${source.name}"><strong>${source.name}</strong><div class="surah-meta">${source.description}</div><div class="surah-meta preview-status" aria-live="polite">در حال بارگذاری پیش‌نمایش…</div><button type="button" class="${index === selectedMushafSource ? "" : "secondary"}" style="margin-top:8px;padding:8px 10px">${index === selectedMushafSource ? "✓ انتخاب‌شده" : "انتخاب منبع"}</button></div>`).join("");
+      picker.querySelectorAll("img[data-preview-source]").forEach(img => {
+        const card = img.closest(".source-card");
+        const status = card.querySelector(".preview-status");
+        img.onload = () => { if (status) status.textContent = "پیش‌نمایش آماده است"; };
+        img.onerror = () => { img.style.display = "none"; if (status) status.textContent = "پیش‌نمایش این منبع در دسترس نیست"; };
+      });
+      picker.querySelectorAll("[data-source]").forEach(card => card.querySelector("button").addEventListener("click", () => {
+        selectedMushafSource = Number(card.dataset.source);
+        try { localStorage.setItem(MUSHAF_SOURCE_KEY, String(selectedMushafSource)); } catch {}
+        renderMushafSources();
+        showMushafPage(mushafPage);
+      }));
+    }
+
     function setupMushaf() {
       let saved = 1;
       try { saved = Number(localStorage.getItem("suza-mushaf-last-page")) || 1; } catch {}
+      try { selectedMushafSource = Math.max(0, Math.min(MUSHAF_SOURCES.length - 1, Number(localStorage.getItem(MUSHAF_SOURCE_KEY)) || 0)); } catch { selectedMushafSource = 0; }
+      renderMushafSources();
       showMushafPage(saved);
       setupMushafSwipe();
       renderSurahList();
       setupFullscreen();
+    }
+
+    const ADHKAR_MORNING = [
+      ["أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", "یک بار"],
+      ["اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ", "یک بار"],
+      ["رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا", "۳ بار"],
+      ["اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ", "یک بار · سیدالاستغفار"],
+      ["اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ", "یک بار"],
+      ["بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ", "۳ بار"],
+      ["حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ", "۷ بار"],
+      ["اللَّهُمَّ عَافِنِي فِي بَدَنِي، اللَّهُمَّ عَافِنِي فِي سَمْعِي، اللَّهُمَّ عَافِنِي فِي بَصَرِي، لَا إِلَهَ إِلَّا أَنْتَ", "۳ بار"],
+      ["اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكُفْرِ وَالْفَقْرِ، وَأَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ، لَا إِلَهَ إِلَّا أَنْتَ", "۳ بار"],
+      ["سُبْحَانَ اللَّهِ وَبِحَمْدِهِ", "۱۰۰ بار"],
+      ["لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", "۱۰ بار یا بیشتر"],
+      ["قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ", "۳ بار · سوره اخلاص"],
+      ["قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِنْ شَرِّ مَا خَلَقَ ۝ وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ", "۳ بار · سوره فلق"],
+      ["قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَهِ النَّاسِ ۝ مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ", "۳ بار · سوره ناس"],
+      ["اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ", "یک بار · آیه‌الکرسی"],
+      ["اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ", "۱۰ بار یا بیشتر"]
+    ];
+    const ADHKAR_EVENING = [
+      ["أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", "یک بار"],
+      ["اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ", "یک بار"],
+      ["رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا", "۳ بار"],
+      ["أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ", "۳ بار"],
+      ["بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ", "۳ بار"],
+      ["اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ", "یک بار"],
+      ["اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ", "یک بار · سیدالاستغفار"],
+      ["حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ", "۷ بار"],
+      ["اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ وَقَهْرِ الرِّجَالِ", "یک بار"],
+      ["سُبْحَانَ اللَّهِ وَبِحَمْدِهِ", "۱۰۰ بار"],
+      ["لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", "۱۰ بار یا بیشتر"],
+      ["قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ", "۳ بار · سوره اخلاص"],
+      ["قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِنْ شَرِّ مَا خَلَقَ ۝ وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ", "۳ بار · سوره فلق"],
+      ["قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَهِ النَّاسِ ۝ مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ", "۳ بار · سوره ناس"],
+      ["اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ", "یک بار · آیه‌الکرسی"],
+      ["اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ", "۱۰ بار یا بیشتر"]
+    ];
+    function renderDhikrList(id, items) {
+      const el = byId(id); if (!el) return;
+      el.innerHTML = items.map(([text, count], i) => `<article class="dhikr-item"><div class="dhikr-text" dir="rtl">${text}</div><div class="dhikr-meta"><span>ذکر ${i + 1}</span><strong>تعداد پیشنهادی: ${count}</strong><button type="button" class="secondary" data-copy-dhikr="${i}" style="padding:7px 10px">کپی ذکر</button></div></article>`).join("");
+      el.querySelectorAll("[data-copy-dhikr]").forEach(btn => btn.addEventListener("click", async () => {
+        const text = items[Number(btn.dataset.copyDhikr)][0];
+        try { await navigator.clipboard.writeText(text); btn.textContent = "کپی شد ✓"; } catch { btn.textContent = text; }
+      }));
+    }
+    let tasbihCount = 0;
+    function updateTasbih() {
+      const countEl = byId("tasbihCount"), status = byId("tasbihStatus"), phrase = byId("tasbihPhrase"), target = Number(byId("tasbihTarget")?.value || 0);
+      if (countEl) countEl.textContent = new Intl.NumberFormat("fa-IR").format(tasbihCount);
+      if (byId("tasbihPhrasePreview") && phrase) byId("tasbihPhrasePreview").textContent = phrase.value;
+      if (status) status.textContent = target && tasbihCount >= target ? `الحمدلله! هدف ${new Intl.NumberFormat("fa-IR").format(target)} ذکر تکمیل شد.` : target ? `${new Intl.NumberFormat("fa-IR").format(tasbihCount)} از ${new Intl.NumberFormat("fa-IR").format(target)} ذکر` : "شمارش بدون هدف";
+      try { localStorage.setItem("suza-tasbih", JSON.stringify({ count: tasbihCount, phrase: phrase?.value || "سُبْحَانَ اللَّهِ", target: byId("tasbihTarget")?.value || "100" })); } catch {}
+    }
+    function setupAdhkar() {
+      renderDhikrList("morningAdhkar", ADHKAR_MORNING); renderDhikrList("eveningAdhkar", ADHKAR_EVENING);
+      try { const saved = JSON.parse(localStorage.getItem("suza-tasbih") || "{}"); tasbihCount = Math.max(0, Number(saved.count) || 0); if (saved.phrase && byId("tasbihPhrase")) byId("tasbihPhrase").value = saved.phrase; if (saved.target && byId("tasbihTarget")) byId("tasbihTarget").value = saved.target; } catch {}
+      byId("tasbihTap")?.addEventListener("click", () => { tasbihCount++; updateTasbih(); });
+      byId("tasbihUndo")?.addEventListener("click", () => { tasbihCount = Math.max(0, tasbihCount - 1); updateTasbih(); });
+      byId("tasbihReset")?.addEventListener("click", () => { tasbihCount = 0; updateTasbih(); });
+      byId("tasbihPhrase")?.addEventListener("change", updateTasbih); byId("tasbihTarget")?.addEventListener("change", updateTasbih); updateTasbih();
     }
 
     let currentRadio = null;
@@ -1744,6 +1855,7 @@
     function init() {
       try { setupNavigation(); } catch (e) { console.error("navigation:", e); }
       try { setupMushaf(); } catch (e) { console.error("mushaf:", e); }
+      try { setupAdhkar(); } catch (e) { console.error("adhkar:", e); }
       try { setupSettings(); } catch (e) { console.error("settings:", e); }
       try { addExtraRadioCards(); } catch (e) { console.error("extra radios:", e); }
       try { setupRadios(); } catch (e) { console.error("radios:", e); }
